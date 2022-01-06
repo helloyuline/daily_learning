@@ -1,0 +1,56 @@
+---
+title: "transform data in R"
+output: html_document
+---
+```{r}
+library(sqldf)
+library(dplyr)
+injuries%>% group_by(type)%>%
+  summarise(total=sum(estimate,na.rm=T))
+```
+```{r}
+library(tidyverse)
+relig_income%>%
+  pivot_longer(!religion)
+```
+```{r}
+library(tidyverse)
+injuries%>%
+   pivot_wider(names_from = "injury", values_from = "estimate")
+```
+```{r}
+injuries$estimate
+```
+```{r}
+is.na(injuries$estimate)%>% any()
+```
+```{r}
+is.na(injuries$estimate)%>% sum()
+```
+```{r}
+injuries
+```
+```{r}
+injuries%>% drop_na()
+```
+```{r}
+injuries$estimate%>%
+  replace_na(mean(injuries$estimate,na.rm=T))
+```
+```{r}
+student_grades
+unite(student_grades,c(last_name,first_name),col=full_name)
+```
+```{r}
+student_grades%>%
+mutate(full_name=paste(last_name,first_name))
+```
+```{r}
+student_grades2<-unite(student_grades,c(last_name,first_name),col=full_name,sep=" ")
+student_grades2
+```
+```{r}
+student_grades2%>% separate(full_name,into=c("last_name","first_name"),sep=" ")
+```
+
+

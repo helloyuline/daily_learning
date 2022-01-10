@@ -2,6 +2,10 @@
 title: "transform data in R"
 output: html_document
 ---
+library(readxl)
+
+
+
 ```{r}
 library(sqldf)
 library(dplyr)
@@ -52,5 +56,8 @@ student_grades2
 ```{r}
 student_grades2%>% separate(full_name,into=c("last_name","first_name"),sep=" ")
 ```
-
+```{r}
+injuries$estimate%>%
+  replace_na(0)
+```
 

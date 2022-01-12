@@ -1,0 +1,76 @@
+---
+title: "Variations on Line Plots"
+output: html_document
+---
+```{r}
+library(tidyverse)
+library(ggcorrplot)
+library(ggthemes)
+library(ggalt)
+```
+
+
+```{r}
+####make temporal data
+var1<-runif(10,0,25)
+time<-seq(1:10)
+df<- tibble(var1,time)
+
+#####just filling in the space under the line
+ggplot(df,aes(x=time,y=var1,fill="purple"))+
+  geom_area()+
+  guides(fill=F)
+```
+```{r}
+####make a stacked line graph
+##adapted from https://r-graphics.org/recipe-line-graph-stacked-area
+###create fake data for 3 people at 3 different time points
+
+Bob<-tibble(person=rep("Bob",5),time=seq(1:5),change=runif(5,0,25))
+Sue<-tibble(person=rep("Sue",5),time=seq(1:5),change=runif(5,0,25))
+Lisa<-tibble(person=rep("Lisa",5),time=seq(1:5),change=runif(5,0,25))
+df<-bind_rows(Bob,Sue,Lisa)
+
+####plot the stacked lineplot
+ggplot(df,aes(x=time,y=change,fill=person))+geom_area()
+```
+```{r}
+####test 
+df_wide<-df%>%
+  pivot_wider(id_cols = time,values_from = change,names_from = person)
+
+#### note that the stacked areas add up to the totals
+df_wide$total<-df_wide$Bob+df_wide$Sue+df_wide$Lisa
+head(df_wide)
+```
+```{r}
+####dumbbell charts
+#adapted from https://rkabacoff.github.io/datavis/Models.html#dumbbell-charts
+
+df2<-df%>%
+  filter(time==1 | time==5)%>%
+  pivot_wider(names_from=time,values_from=change)%>%
+  rename(year1='1',year5='5')
+ggplot(df2,
+       aes(y=person,
+           x=year1,
+           xend=year5))+
+  geom_dumbbell()
+
+
+```
+
+```{r}
+####reorder the y axis,change colors and sizes
+ggplot(df2,
+       aes(y=reorder(person,year1),
+           x=year1,
+           xend=year5))+
+  geom_dumbbell(
+    colour_x = "purple",
+    colour_xend = "red",
+    size_x = 3,
+    size_xend = 3
+  )
+```
+

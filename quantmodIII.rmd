@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(quantmod)
 library(tidyverse)
+a
 ```
 
 
@@ -113,5 +114,4 @@ addTA(signal,type='S',col='red')
 quantmod:::get.current.chob
 ```
 
-
-
+    

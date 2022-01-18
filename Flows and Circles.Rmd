@@ -1,0 +1,83 @@
+---
+title: "Flows and Circles"
+output: html_document
+---
+
+
+######A1Tuvial Diagrams
+#Adapted from: https://github.com/corybrunson /ggalluvial
+#install.packages ("ggalluvial")
+library("ggalluvial")
+####Let's
+create some fake data about student performance in classes
+####21 students are divided in 3 groups, they are men and women, and they get High pass,
+Pass, or Fail
+
+```{r}
+#### create some fake data about student performance in classes
+#### 21 students are divided in 3 groups, they are men and women, and they get high pass, pass or fail
+library("ggalluvial")
+library("dplyr")
+group1<- tibble(groupid=groupid<-rep("group1",7),
+                studentid=sample(seq(from=1,to=20),7),
+                gender=sample(c("M","F"),7,replace=TRUE),
+                grades=sample(c("High Pass","Pass","Fail"),7,replace =TRUE))
+                
+group2<- tibble(groupid=groupid<-rep("group2",7),
+                studentid=sample(seq(from=21,to=30),7),
+                gender=sample(c("M","F"),7,replace=TRUE),
+                grades=sample(c("High Pass","Pass","Fail"),7,replace =TRUE))
+                
+group3<- tibble(groupid=groupid<-rep("group3",7),
+                studentid=sample(seq(from=31,to=40),7),
+                gender=sample(c("M","F"),7,replace=TRUE),
+                grades=sample(c("High Pass","Pass","Fail"),7,replace =TRUE))
+                
+
+students<- bind_rows(group1,group2,group3)
+students_table<-students%>%
+  group_by(groupid,gender,grades) %>%
+  count()
+  ggplot(students_table, aes(axis1=groupid,axis2=grades,y=n))+
+   geom_alluvium(aes(fill=gender))+
+   geom_stratum()+
+   geom_text(stat="stratum", 
+             aes(label=after_stat(stratum)))+
+    scale_fill_manual(values=c("purple","green"))
+
+
+```
+
+```{r}
+#packed circle figure
+#install.packages("packcircles")
+####use congress data as an example
+#### sample a number of members from the 114th congress
+library(tidyverse)
+library(packcircles)
+cel_114<- cel %>% filter(congress==114)
+members<- sample_n(cel_114,25)
+packing<- circleProgressiveLayout(members$all_pass,sizetype = 'area')
+members<-add_column(members,packing)
+dat.gg<-circleLayoutVertices(packing,npoints = 50)
+ggplot()+
+  geom_polygon(data=dat.gg,
+               aes(x=x,
+                   y=y,
+                   group=id,
+                   fill=as.factor(id),
+                   alpha=0.6))+
+  geom_text(data=members,
+            aes(x=x,
+                y=y,
+                size=all_pass,
+                label=thomas_name))+
+  theme(legend.position = "none")+
+  coord_equal()
+```
+```{r}
+#### pie charts
+Prop<-c(3,7,9,1,2)
+pie(Prop)
+```
+

@@ -38,6 +38,7 @@ students<- bind_rows(group1,group2,group3)
 students_table<-students%>%
   group_by(groupid,gender,grades) %>%
   count()
+
   ggplot(students_table, aes(axis1=groupid,axis2=grades,y=n))+
    geom_alluvium(aes(fill=gender))+
    geom_stratum()+
@@ -80,4 +81,5 @@ ggplot()+
 Prop<-c(3,7,9,1,2)
 pie(Prop)
 ```
+??congress
 

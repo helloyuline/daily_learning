@@ -1,0 +1,79 @@
+---
+title: "maps"
+output: html_document
+---
+
+```{r}
+library(maps)
+library(ggmap)
+library(tidyverse)
+my_world_data<-map_data("world")
+ggplot(data=my_world_data, mapping=aes(x=long,y=lat,group=group))+
+  geom_polygon(fill="white",color="black")
+```
+```{r}
+germany_france<-
+  filter(my_world_data,region=="Germany" |region=="France"  )
+ggplot(data=germany_france, mapping=aes(x=long,y=lat,group=group))+
+  geom_polygon(fill="white",color="black")
+```
+```{r}
+a_region<-
+  filter(my_world_data,long>=10 & long<=15.1 & lat>=32 & lat<=55 )
+ggplot(data=a_region, mapping=aes(x=long,y=lat,group=group))+
+  geom_polygon(fill="white",color="black")
+```
+```{r}
+library(data.table)
+map_test<-map_data("state")
+ggplot(data=map_test, mapping=aes(x=long,y=lat,group=group))+
+  geom_polygon(fill="white",color="black")
+states<-unique(map_test$region)
+somee_data_values<-data.frame(
+  "region"=states,
+  "qual_values"=c(rep(LETTERS[1:10],4),LETTERS[1:9]),
+  "quant_values"=runif(49,0,5)
+  
+)
+map_data_conbined<-left_join(map_test,somee_data_values,by="region")
+ggplot(data=map_data_conbined, mapping=aes(x=long,y=lat,group=group,fill=quant_values))+
+  geom_polygon(color="black")
+```
+```{r}
+ggplot(data=map_data_conbined, mapping=aes(x=long,y=lat,group=group,fill=factor(quant_values)))+
+  geom_polygon(color="black")+
+  theme_classic()+
+  labs(x="",y="",title = "A test choropleth")+
+  theme(axis.text.x = element_blank(),axis.text.y = element_blank(),axis.line = element_blank(),axis.ticks  = element_blank())+
+  scale_fill_brewer(aesthetics ="Spectral")
+```
+```{r}
+japan_map<-
+  filter(my_world_data,region=="Japan" )
+ggplot(data=japan_map, mapping=aes(x=long,y=lat,group=group))+
+  geom_polygon(fill="white",color="black")
+```
+```{r}
+head(maps::world.cities)
+world_city<-maps::world.cities
+japan_cities<-filter(world_city,country.etc=="Japan")
+ggplot(data=japan_map, mapping=aes(x=long,y=lat,group=group))+
+  geom_polygon(fill="white",color="black")+
+  geom_point(data=japan_cities,aes(x=long,y=lat,group=NULL),color="red")
+```
+```{r}
+head(maps::world.cities)
+world_city<-maps::world.cities
+japan_cities_big<-filter(world_city,country.etc=="Japan" & pop>=500000)
+ggplot(data=japan_map, mapping=aes(x=long,y=lat,group=group))+
+  geom_polygon(fill="white",color="black")+
+  geom_point(data=japan_cities_big,aes(x=long,y=lat,group=NULL,size=pop),color="red")
+
+japan_cities_big$qual<-sample(LETTERS[1:5],nrow(japan_cities_big),replace=TRUE)
+ggplot(data=japan_map, mapping=aes(x=long,y=lat,group=group))+
+  geom_polygon(fill="white",color="black")+
+  geom_point(data=japan_cities_big,aes(x=long,y=lat,group=NULL,size=pop,color=qual))
+
+```
+
+

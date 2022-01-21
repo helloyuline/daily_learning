@@ -1,0 +1,93 @@
+---
+title: "animate"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(gganimate)
+library(gifski)
+library(transformr)
+data(mtcars)
+ggplot(data=mtcars,aes(x=factor(cyl),y=mpg))+
+  geom_boxplot()+
+  facet_wrap(~gear)
+```
+```{r}
+my_anim<-ggplot(data=mtcars,aes(x=factor(cyl),y=mpg))+
+  geom_boxplot()+
+transition_states(
+  gear
+)
+```
+
+```{r}
+cel <- read_csv(url("https://www.dropbox.com/s/4ebgnkdhhxo5rac/cel_volden_wiseman%20_coursera.csv?raw=1"))
+head(cel)
+```
+```{r}
+### transition_time
+cel <- read_csv(url("https://www.dropbox.com/s/4ebgnkdhhxo5rac/cel_volden_wiseman%20_coursera.csv?raw=1"))
+head(cel)
+
+###Plot total number of D and Rs across Congresses
+cel$party<-recode(cel$dem,'1'="Democrat",'0'="Republican")
+cong_dat<- cel%>%
+  group_by(year,party)%>%
+  summarise("Seats"=n())
+
+anim2<-ggplot(cong_dat,aes(x=year,y=Seats,fill=party))+
+  geom_bar(stat="identity")+
+  geom_hline(yintercept = 217)+
+  scale_fill_manual(values = c("blue","red"))+
+  transition_time(year)
+
+anim2<-ggplot(cong_dat,aes(x=year,y=Seats,fill=party))+
+  geom_bar(stat="identity")+
+  geom_hline(yintercept = 217)+
+  scale_fill_manual(values = c("blue","red"))+
+  transition_time(year)
+
+
+```
+```{r}
+ggplot()+
+  geom_jitter(aes(x=seniority,y=all_pass,color=party),data=filter(cel,congress==115 & party=="Democrat"))+
+    geom_jitter(aes(x=seniority,y=all_pass,color=party),data=filter(cel,congress==115 & party=="Republican"))+
+    geom_smooth(aes(x=seniority,y=all_pass,color=party),data=filter(cel,congress==115 & party=="Democrat"))+
+    geom_smooth(aes(x=seniority,y=all_pass,color=party),data=filter(cel,congress==115 & party=="Republican"))+
+  scale_color_manual(values = c("blue","red"))
+```
+```{r}
+anim3<-ggplot()+
+  geom_jitter(aes(x=seniority,y=all_pass,color=party),data=filter(cel,congress==115 & party=="Democrat"))+
+    geom_jitter(aes(x=seniority,y=all_pass,color=party),data=filter(cel,congress==115 & party=="Republican"))+
+    geom_smooth(aes(x=seniority,y=all_pass,color=party),data=filter(cel,congress==115 & party=="Democrat"))+
+    geom_smooth(aes(x=seniority,y=all_pass,color=party),data=filter(cel,congress==115 & party=="Republican"))+
+  scale_color_manual(values = c("blue","red"))+
+  transition_layers()
+```
+
+```{r}
+ggplot(mtcars,aes(factor(cyl),mpg))+
+  geom_boxplot()+
+  transition_states(factor(cyl))
+
+
+# fade in, fade-out
+anim0<- my_anim+
+  enter_fade()+
+  exit_fade()
+
+#shadowing
+anim4<-ggplot(cong_dat,aes(x=year,y=Seats,fill=party))+
+  geom_bar(stat = "identity")+
+  geom_hline(yintercept = 217)+
+  scale_fill_manual(values = c("blue","red"))+
+  transition_time(year)+
+  shadow_wake(wake_length = 1,alpha=FALSE,wrap = FALSE)
+
+
+anim_save("test.gif",animation=anim4)
+```
+

@@ -90,4 +90,36 @@ anim4<-ggplot(cong_dat,aes(x=year,y=Seats,fill=party))+
 
 anim_save("test.gif",animation=anim4)
 ```
+```{r}
+library(plotly)
+
+set.seed(955)
+# Make some noisily increasing data
+dat <- data.frame(cond = rep(c("A", "B"), each=10),
+                  xvar = 1:20 + rnorm(20,sd=3),
+                  yvar = 1:20 + rnorm(20,sd=3))
+
+p <- ggplot(dat, aes(x=xvar, y=yvar)) +
+    geom_point(shape=1)      # Use hollow circles
+
+fig <- ggplotly(p)
+
+fig
+```
+```{r}
+ggplotly(ggplot(cel,aes(x=seniority,y=les,color=party,fame=year))+
+           geom_point()+
+           labs(x="Seniority",y="leg. Effectiveness")+
+           scale_color_manual(values = c("blue","red"))
+         )
+
+### add an ids option to create object constancy - if the same member is in multiple congresses, move that point independently
+
+ggplotly(ggplot(cel,aes(x=seniority,y=les,color=party,fame=year,ids=thomas_name))+
+           geom_point()+
+           labs(x="Seniority",y="leg. Effectiveness")+
+           scale_color_manual(values = c("blue","red"))
+         )
+
+```
 
